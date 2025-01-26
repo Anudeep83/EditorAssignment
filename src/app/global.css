@@ -1,0 +1,29 @@
+/* global.css */
+
+/* Editor Container */
+.editor {
+  @apply min-h-[200px] border p-4 rounded outline-2 outline-gray-500;
+}
+
+/* Button Style */
+.button {
+  @apply p-2 bg-gray-200 rounded hover:bg-gray-300;
+}
+
+/* To-Do List Styling */
+.todo-item {
+  @apply flex items-center space-x-2 mb-2;
+}
+
+.todo-item input[type="checkbox"] {
+  @apply w-6 h-6 border-2;
+}
+
+.todo-item span {
+  @apply flex-1;
+}
+
+/* Hover effect for buttons */
+button:hover {
+  @apply bg-gray-300;
+}
