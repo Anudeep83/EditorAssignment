@@ -1,9 +1,10 @@
 import RichTextEditor from "./RichTextEditor";
+import './global.css'; // Global styles only
 
 export default function Home() {
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Rich Text Editor</h1>
+    <div className = "bg-container">
+      <h1 className="text-2xl font-bold mb-4 text">Todo List</h1>
       <RichTextEditor />
     </div>
   );

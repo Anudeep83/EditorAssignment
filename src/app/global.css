@@ -1,29 +1,108 @@
-/* global.css */
-
 /* Editor Container */
+.bg-container {
+  background-color: black;
+  min-height: 100vh;
+  height: auto;
+  background-size: fill;
+  padding: 50px;
+}
+
+.text {
+  color: white;
+  font-family: roboto;
+}
+
 .editor {
-  @apply min-h-[200px] border p-4 rounded outline-2 outline-gray-500;
+  @apply min-h-[20px] border p-4 rounded-none mb-4;
+  position: relative; /* Make sure the placeholder works inside contentEditable */
+  outline: none;
 }
 
-/* Button Style */
-.button {
-  @apply p-2 bg-gray-200 rounded hover:bg-gray-300;
+.editor::before {
+  content: "Write something or press ; for Commands"; /* Placeholder text */
+  color: #888; /* Light gray for the placeholder */
+  font-style: italic;
+  position: absolute;
+  top: 10px; /* Adjust to the top of the editor */
+  left: 10px; /* Adjust to the left of the editor */
+  pointer-events: none; /* Prevent the placeholder from blocking text input */
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
 }
 
-/* To-Do List Styling */
+/* Ensure the placeholder is only visible when contentEditable is empty */
+.editor:empty::before {
+  content: "Write something or press ; for Commands"; /* Placeholder content */
+}
+
+.editor.has-content::before {
+  content: ""; /* Remove placeholder when contentEditable has content */
+}
+
+.editor:focus::before {
+  content: ""; /* Remove placeholder when focused */
+}
+
 .todo-item {
   @apply flex items-center space-x-2 mb-2;
 }
 
-.todo-item input[type="checkbox"] {
-  @apply w-6 h-6 border-2;
+/* Custom checkbox styles */
+.custom-checkbox {
+  width: 20px;
+  height: 20px;
+  background-color: black; /* Set background to black when unchecked */
+  border: 2px solid #ccc;
+  appearance: none;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+}
+
+.custom-checkbox:checked {
+  background-color: white; /* Set background to white when checked */
+}
+
+.custom-checkbox:checked::before {
+  content: '\2713'; /* Unicode for checkmark */
+  position: absolute;
+  top: 50%; /* Vertically center the checkmark */
+  left: 50%; /* Horizontally center the checkmark */
+  transform: translate(-50%, -50%);
+  color: black; /* Checkmark color */
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.custom-checkbox:focus {
+  outline: none;
 }
 
 .todo-item span {
   @apply flex-1;
+  outline: none;
 }
 
 /* Hover effect for buttons */
 button:hover {
   @apply bg-gray-300;
+}
+
+.todo-text {
+  display: inline-block;
+  width: 100%;
+  padding: 5px;
+  font-size: 16px;
+  border: 0px solid black;
+  border-radius: 0px; /* Set border-radius to 0px */
+  min-height: 25px;
+}
+
+.todo-text.line-through {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.todo-text.text-black {
+  color: white;
 }

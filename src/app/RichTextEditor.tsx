@@ -1,10 +1,12 @@
 "use client"; // Mark this file as a client-side component
 
-import React, { useState, useEffect } from "react";
-import './global.css'; // Global styles only
+import React, { useState, useEffect, useRef } from "react";
+import "./global.css"; // Global styles only
 
 const RichTextEditor: React.FC = () => {
   const [todoItems, setTodoItems] = useState<{ text: string; checked: boolean }[]>([]);
+  const todoRefs = useRef<(HTMLSpanElement | null)[]>([]); // Refs for each to-do item
+  const editorRef = useRef<HTMLDivElement | null>(null); // Ref for the contentEditable div
 
   // Save checkbox states and texts in localStorage
   const saveCheckboxState = () => {
@@ -47,6 +49,12 @@ const RichTextEditor: React.FC = () => {
       const newTodoItem = { text: "", checked: false };
       const updatedItems = [...todoItems, newTodoItem];
       setTodoItems(updatedItems);
+
+      // Update refs to include the new to-do item and focus on it
+      setTimeout(() => {
+        todoRefs.current[todoRefs.current.length - 1]?.focus();
+      }, 0);
+
       localStorage.setItem("todoItems", JSON.stringify(updatedItems));
     }
 
@@ -56,8 +64,19 @@ const RichTextEditor: React.FC = () => {
       const newTodoItem = { text: "", checked: false };
       const updatedItems = [...todoItems, newTodoItem];
       setTodoItems(updatedItems);
+
+      // Update refs to include the new to-do item and focus on it
+      setTimeout(() => {
+        todoRefs.current[todoRefs.current.length - 1]?.focus();
+      }, 0);
+
       localStorage.setItem("todoItems", JSON.stringify(updatedItems));
     }
+  };
+
+  const clearLocalStorage = () => {
+    localStorage.removeItem("todoItems"); // Remove specific data from local storage
+    setTodoItems([]); // Clear the state
   };
 
   // Load checkbox state on component mount
@@ -65,53 +84,62 @@ const RichTextEditor: React.FC = () => {
     loadCheckboxState();
   }, []);
 
-  return (
-    <div>
-      {/* Toolbar for text formatting */}
-      <div className="toolbar">
-        <button className="button" onClick={() => document.execCommand("bold")}>
-          Bold
-        </button>
-        <button className="button" onClick={() => document.execCommand("italic")}>
-          Italic
-        </button>
-        <button className="button" onClick={() => document.execCommand("underline")}>
-          Underline
-        </button>
-      </div>
+  // Function to handle placeholder visibility
+  const handleFocus = () => {
+    if (editorRef.current && editorRef.current.textContent !== "") {
+      editorRef.current.classList.add("has-content");
+    }
+  };
 
+  const handleBlur = () => {
+    if (editorRef.current && editorRef.current.textContent === "") {
+      editorRef.current.classList.remove("has-content");
+    }
+  };
+
+  return (
+    <div className="bg-container">
       {/* Content Editable Area */}
       <div
+        ref={editorRef}
         contentEditable
         onKeyDown={handleKeyDown}
-        className="editor"
-      >
-        {/* Placeholder content */}
-      </div>
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        className="editor text"
+      ></div>
 
       {/* To-Do List Section */}
       <div className="mt-4">
         {todoItems.map((item, index) => (
-          <div key={index} className="todo-item">
+          <div key={index} className="todo-item text">
             <input
               type="checkbox"
-              className="w-6 h-6 border-2"
+              className="custom-checkbox"
               checked={item.checked}
               onChange={() => toggleStrikethrough(index)} // Toggle strikethrough when clicked
             />
             <span
-              className={`${item.checked ? "line-through" : "text-black"}`} // Add strikethrough when checked
+              className={`todo-text ${item.checked ? "line-through" : "text-black"}`} // Add strikethrough when checked
               contentEditable
-              suppressContentEditableWarning
-              
-              
               onBlur={(e) => handleTextChange(index, e.currentTarget.innerText)} // Save text when focus is lost
+              ref={(el) => {
+                todoRefs.current[index] = el; // Assign the element to the ref array
+              }} // Ensure the callback doesn't return anything
             >
               {item.text}
             </span>
           </div>
         ))}
       </div>
+
+      {/* Clear Data Button */}
+      <button
+        className="button mt-4"
+        onClick={clearLocalStorage} // Clear local storage when clicked
+      >
+        Clear Data
+      </button>
     </div>
   );
 };
